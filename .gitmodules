@@ -1,12 +1,16 @@
 [submodule "auth-service"]
 	path = auth-service
 	url = git@github.com:IDP-TrainTickets/auth-service.git
+	branch = main
 [submodule "kong"]
 	path = kong
 	url = git@github.com:IDP-TrainTickets/kong.git
+	branch = main
 [submodule "database"]
 	path = database
 	url = git@github.com:IDP-TrainTickets/database.git
+	branch = main
 [submodule "routes-service"]
 	path = routes-service
 	url = git@github.com:IDP-TrainTickets/routes-service.git
+	branch = main
