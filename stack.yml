@@ -7,6 +7,10 @@ networks:
     driver: overlay
   adminer:
     driver: overlay
+  frontend_bl_net:
+    driver: overlay
+  backend_bl_net:
+    driver: overlay
 
 
 volumes:
@@ -23,6 +27,7 @@ services:
       - db_data:/var/lib/postgresql/data
     networks:
       - backend_net
+      - backend_bl_net
       - adminer
     #deploy:
       #placement:
@@ -41,9 +46,10 @@ services:
   kong:
     image: andreistan26/kong:latest
     ports:
-      - "80:8000"
+      - 8000:8000
     networks:
       - frontend_net
+      - frontend_bl_net
     #deploy:
       #placement:
         #constraints: [node.role == manager]
@@ -51,8 +57,16 @@ services:
   adminer:
     image: adminer:latest
     ports:
-      - 8080:8080
+      - 8080:8090
     depends_on:
       - db
     networks:
       - adminer
+  
+  business-logic-app:
+    image: andreistan26/business-logic-service:latest
+    networks:
+      - frontend_bl_net
+      - backend_bl_net
+
+
