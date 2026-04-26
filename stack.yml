@@ -12,6 +12,8 @@ networks:
     driver: overlay
   backend_auth_net:
     driver: overlay
+  backend_routes_net:
+    driver: overlay
   backend_bl_net:
     driver: overlay
   adminer:
@@ -31,7 +33,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
-      - backend_bl_net
+      - backend_routes_net
       - backend_auth_net
       - adminer
     #deploy:
@@ -79,7 +81,12 @@ services:
   business-logic-app:
     image: andreistan26/business-logic-service:latest
     networks:
-      - backend_bl_net
       - gw_bl_net
+      - backend_bl_net
 
+  routes-app:
+    image: andreistan26/routes-service:latest
+    networks:
+      - backend_routes_net
+      - backend_bl_net
 
