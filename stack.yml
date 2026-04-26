@@ -3,13 +3,18 @@ version: '3.8'
 networks:
   frontend_net:
     driver: overlay
-  backend_net:
+    attachable: true
+  gw_auth_net:
     driver: overlay
-  adminer:
+  gw_bl_net:
     driver: overlay
-  frontend_bl_net:
+  gw_adminer_net:
+    driver: overlay
+  backend_auth_net:
     driver: overlay
   backend_bl_net:
+    driver: overlay
+  adminer:
     driver: overlay
 
 
@@ -26,8 +31,8 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
-      - backend_net
       - backend_bl_net
+      - backend_auth_net
       - adminer
     #deploy:
       #placement:
@@ -36,8 +41,8 @@ services:
   auth-app:
     image: andreistan26/auth-service:latest
     networks:
-      - frontend_net
-      - backend_net
+      - gw_auth_net
+      - backend_auth_net
     #deploy:
       #replicas: 2
       #placement:
@@ -46,10 +51,17 @@ services:
   kong:
     image: andreistan26/kong:latest
     ports:
+      - target: 8022     # Testing port
+        published: 8022
+        protocol: tcp
+        mode: host
       - 8000:8000
+      - 8001:8001
     networks:
       - frontend_net
-      - frontend_bl_net
+      - gw_auth_net
+      - gw_bl_net
+      - gw_adminer_net
     #deploy:
       #placement:
         #constraints: [node.role == manager]
@@ -57,16 +69,17 @@ services:
   adminer:
     image: adminer:latest
     ports:
-      - 8080:8090
+      - 8080:8080
     depends_on:
       - db
     networks:
       - adminer
-  
+      - gw_adminer_net
+ 
   business-logic-app:
     image: andreistan26/business-logic-service:latest
     networks:
-      - frontend_bl_net
       - backend_bl_net
+      - gw_bl_net
 
 
