@@ -5,6 +5,9 @@ networks:
     driver: overlay
   backend_net:
     driver: overlay
+  adminer:
+    driver: overlay
+
 
 volumes:
   db_data:
@@ -20,6 +23,7 @@ services:
       - db_data:/var/lib/postgresql/data
     networks:
       - backend_net
+      - adminer
     #deploy:
       #placement:
         #constraints: [node.role == manager]
@@ -43,3 +47,12 @@ services:
     #deploy:
       #placement:
         #constraints: [node.role == manager]
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - adminer
