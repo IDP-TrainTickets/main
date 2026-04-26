@@ -14,3 +14,7 @@
 	path = routes-service
 	url = git@github.com:IDP-TrainTickets/routes-service.git
 	branch = main
+[submodule "business-logic-service"]
+	path = business-logic-service
+	url = git@github.com:IDP-TrainTickets/business-logic-service.git
+	branch = main
