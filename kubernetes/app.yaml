@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-app
+  template:
+    metadata:
+      labels:
+        app: auth-app
+    spec:
+      containers:
+        - name: auth-app
+          image: andreistan26/auth-service:latest
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: business-logic-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: business-logic-app
+  template:
+    metadata:
+      labels:
+        app: business-logic-app
+    spec:
+      containers:
+        - name: business-logic-app
+          image: andreistan26/auth-service:latest
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: routes-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: routes-app
+  template:
+    metadata:
+      labels:
+        app: routes-app
+    spec:
+      containers:
+        - name: routes-app
+          image: andreistan26/routes-service:latest
+          imagePullPolicy: Always

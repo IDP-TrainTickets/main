@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kong
+  template:
+    metadata:
+      labels:
+        app: kong
+    spec:
+      containers:
+        - name: kong
+          image: andreistan26/kong:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+            - containerPort: 8001
+            - containerPort: 8022
+
