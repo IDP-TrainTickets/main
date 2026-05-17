@@ -92,6 +92,8 @@ services:
       - gw_bl_net
       - gw_adminer_net
     deploy:
+      mode: replicated
+      replicas: 1
       restart_policy:
         condition: on-failure
         delay: 20s
@@ -158,6 +160,9 @@ services:
     networks:
         - monitoring
     deploy:
+      placement:
+        constraints: [node.role == manager]
+
       restart_policy:
         condition: on-failure
         delay: 20s
@@ -194,6 +199,10 @@ services:
       - monitoring
       - logging
     deploy:
+      placement:
+        constraints: [node.role == manager]
+      mode: replicated
+      replicas: 1
       restart_policy:
         condition: on-failure
         delay: 20s
@@ -212,6 +221,8 @@ services:
       - logging
       - monitoring
     deploy:
+      mode: replicated
+      replicas: 1
       restart_policy:
         condition: on-failure
         delay: 20s
