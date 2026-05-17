@@ -14,8 +14,9 @@ spec:
     spec:
       containers:
         - name: db
-          image: andreistan26/database:latest
-          imagePullPolicy: Always
+          image: andreistan26/database
+          ports:
+            - containerPort: 5432
           env:
             - name: POSTGRES_DB
               value: db
@@ -23,3 +24,16 @@ spec:
               value: admin
             - name: POSTGRES_PASSWORD
               value: password123
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  type: ClusterIP
+  selector:
+    app: db
+  ports:
+    - port: 5432
+      targetPort: 5432
+

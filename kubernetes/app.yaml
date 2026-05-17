@@ -15,7 +15,19 @@ spec:
       containers:
         - name: auth-app
           image: andreistan26/auth-service:latest
-          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-app
+spec:
+  selector:
+    app: auth-app
+  ports:
+    - port: 5000
+      targetPort: 5000
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -34,7 +46,19 @@ spec:
       containers:
         - name: business-logic-app
           image: andreistan26/auth-service:latest
-          imagePullPolicy: Always
+          ports:
+            - containerPort: 5001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: business-logic-app
+spec:
+  selector:
+    app: business-logic-app
+  ports:
+    - port: 5001
+      targetPort: 5001
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -53,4 +77,16 @@ spec:
       containers:
         - name: routes-app
           image: andreistan26/routes-service:latest
-          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: routes-app
+spec:
+  selector:
+    app: routes-app
+  ports:
+    - port: 5000
+      targetPort: 5000
