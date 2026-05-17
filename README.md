@@ -3,6 +3,9 @@
 ## Starting up the services
 
 ```bash
+# For loki plugin https://grafana.com/docs/loki/latest/send-data/docker-driver/
+docker plugin install grafana/loki-docker-driver:3.7.0-arm64 --alias loki --grant-all-permissions
+
 docker swarm init
 docker stack deploy -c stack.yml app_stack
 ```
@@ -26,3 +29,8 @@ curl -i http://localhost:8022/auth/login -H "Content-Type: application/json" -d 
 ```bash
 curl -i http://localhost:8022/api/test -H "Authorization: Bearer <token>"   -H "Content-Type: application/json"   -d '{"username":"admin","password":"password123"}'
 ```
+
+
+
+
+

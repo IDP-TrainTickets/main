@@ -16,11 +16,13 @@ networks:
     driver: overlay
   backend_bl_net:
     driver: overlay
-  adminer:
+  adminer_net:
     driver: overlay
   monitoring:
     driver: overlay
     attachable: true
+  logging:
+    driver: overlay
 
 
 volumes:
@@ -39,16 +41,33 @@ services:
     networks:
       - backend_routes_net
       - backend_auth_net
-      - adminer
+      - adminer_net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 5
+
     #deploy:
       #placement:
         #constraints: [node.role == manager]
 
   auth-app:
     image: andreistan26/auth-service:latest
+    logging:
+      driver: loki
+      options:
+        loki-url: http://127.0.0.1:3100/loki/api/v1/push
+        loki-external-labels: job=auth-app,owner=train-tickets,environment=development
     networks:
       - gw_auth_net
       - backend_auth_net
+      - logging
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 5
     #deploy:
       #replicas: 2
       #placement:
@@ -68,6 +87,11 @@ services:
       - gw_auth_net
       - gw_bl_net
       - gw_adminer_net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 5
     #deploy:
       #placement:
         #constraints: [node.role == manager]
@@ -79,20 +103,47 @@ services:
     depends_on:
       - db
     networks:
-      - adminer
+      - adminer_net
       - gw_adminer_net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 5
  
   business-logic-app:
     image: andreistan26/business-logic-service:latest
+    logging:
+      driver: loki
+      options:
+        loki-url: http://127.0.0.1:3100/loki/api/v1/push
+        loki-external-labels: job=bl-app,owner=train-tickets,environment=development
     networks:
       - gw_bl_net
       - backend_bl_net
+      - logging
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 5
 
   routes-app:
     image: andreistan26/routes-service:latest
+    logging:
+      driver: loki
+      options:
+        loki-url: http://127.0.0.1:3100/loki/api/v1/push
+        loki-external-labels: job=routes-app,owner=train-tickets,environment=development
     networks:
       - backend_routes_net
       - backend_bl_net
+      - logging
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 5
 
   prometheus:
     image: prom/prometheus
@@ -102,6 +153,11 @@ services:
         - 9090:9090
     networks:
         - monitoring
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 5
 
   node_exporter:
     image: prom/node-exporter
@@ -118,6 +174,11 @@ services:
         - 9100:9100
     networks:
         - monitoring
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 5
 
   grafana:
     image: grafana/grafana
@@ -127,4 +188,28 @@ services:
       - grafana-storage:/var/lib/grafana
     networks:
       - monitoring
+      - logging
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 5
+
+  loki:
+    image: grafana/loki
+    volumes:
+      - ./configs/loki.yml:/etc/config/loki.yml
+    entrypoint:
+      - /usr/bin/loki
+      - -config.file=/etc/config/loki.yml
+    ports:
+      - 3100:3100
+    networks:
+      - logging
+      - monitoring
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 5
 
