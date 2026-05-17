@@ -1,5 +1,11 @@
 # Testing
 
+## Deploying using kuberentes
+
+```bash
+kubectl apply -f ./kubernetes
+```
+
 ## Starting up the services
 
 ```bash
